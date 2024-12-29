@@ -4,7 +4,7 @@ import ShowTodo from './showtodo'
 
 const Index = () => {
   return (
-    <div className='bg-cyan-300 h-full w-full p-0 m-0'>
+    <div className='h-full w-full p-0 m-0'>
         <AddTodo />
         <ShowTodo/>
     </div>

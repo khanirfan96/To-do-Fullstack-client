@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { MdSaveAlt } from "react-icons/md";
-import { LiaUndoAltSolid } from "react-icons/lia";
+import { MdEdit } from "react-icons/md";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { deleteTodo, getTodo, updateTodo } from "../../utils/methods";
 
 const ShowTodo = () => {
     const [todoData, setTodoData] = useState([])
     const [checkedTasks, setCheckedTasks] = useState<boolean[]>([]);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null); // Track the editing todo index
+    const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editValue, setEditValue] = useState<string>("");
 
     useEffect(() => {
@@ -21,8 +21,9 @@ const ShowTodo = () => {
         fetchData();
     }, []);
 
-    function handlDeleteTodo(todo: any) {
+    const handleDeleteTodo = async (todo: any) => {
         deleteTodo(todo._id)
+        setTodoData((prev) => prev.filter((item:any) => item._id !== todo._id));
     }
 
     const handleEditTask = (index: number, currentTask: string) => {
@@ -32,9 +33,7 @@ const ShowTodo = () => {
 
     const handleSaveEdit = async (todo: any) => {
         await updateTodo(todo._id, editValue);
-        setTodoData((prev: any) =>prev.map((item: String, idx: number) =>
-                idx === editingIndex ? { ...item, task: editValue } : item)
-        );
+        setTodoData((prev: any) =>prev.map((item: String, idx: number) =>idx === editingIndex ? { ...item, task: editValue } : item));
         setEditingIndex(null);
         setEditValue("");
     };
@@ -48,36 +47,28 @@ const ShowTodo = () => {
     };
 
     return (
-        <div className="justify-center items-center mx-10">
+        <div className="justify-center items-center grid grid-cols-3 px-6 gap-6">
             {todoData?.map((todo: any, index: number) =>
-                <div className="grid grid-cols-2 gap-2 p-4 items-center" key={index}>{editingIndex === index ? (
+                <div className="flex border rounded-md items-center justify-between shadow-md hover:shadow-none" key={index}>{editingIndex === index ? (
                     <input
                         type="text"
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
-                        className="bg-white border rounded-lg p-2"
+                        className="bg-white p-2 w-full border focus:border-none focus:outline-none rounded-md"
                     />
-                ) : (
-                    <p className={`bg-white border rounded-lg p-2 ${checkedTasks[index] ? "line-through" : ""}`}>
+                    ) : (
+                    <p className={`bg-white p-2 ${checkedTasks[index] ? "line-through" : ""}`}>
                         {todo.task}
                     </p>
-                )}
-                    <div className="flex gap-2">
+                    )}
+                        <div className="flex gap-2 p-2">
                         {editingIndex === index ? (
-                            <button className="bg-green-600 text-white h-5 w-10 items-center justify-center" onClick={() => handleSaveEdit(todo)}>
-                                <MdSaveAlt />
-                            </button>
+                                <MdSaveAlt className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleSaveEdit(todo)}/>
                         ) : (
                             <>
-                                <button className="bg-green-600 text-white h-5 w-5 items-center justify-center" onClick={() => handleCheck(index)}>
-                                    <FaCheck />
-                                </button>
-                                <button className="bg-red-600 text-white h-5 w-5" onClick={() => handlDeleteTodo(todo)}>
-                                    <RxCross2 />
-                                </button>
-                                <button className="bg-black text-white h-5 w-5" onClick={() => handleEditTask(index, todo.task)}>
-                                    <BiSolidEditAlt />
-                                </button>
+                                    <FaCheck className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleCheck(index)}/>
+                                    <RxCross2 className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleDeleteTodo(todo)}/>
+                                    <MdEdit className="bg-black text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleEditTask(index, todo.task)}/>
                             </>
                         )}
                     </div>
