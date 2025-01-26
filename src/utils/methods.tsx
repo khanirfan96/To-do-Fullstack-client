@@ -20,6 +20,9 @@ export const getTodo = async () => {
 export const postTodo = async (todo:string) =>{
     const request = new Request(API_URL + 'posttodo', {
         method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
             "task": todo,
             "status": true
@@ -41,6 +44,9 @@ export const postTodo = async (todo:string) =>{
 export const updateTodo = async (id:string, task:any) =>{
     const request = new Request(API_URL +'puttodo/' + id, {
         method: "PUT",
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
             "task": task,
         })
