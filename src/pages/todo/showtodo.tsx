@@ -6,12 +6,17 @@ import { MdSaveAlt } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { deleteTodo, getTodo, updateTodo } from "../../utils/methods";
+import { Input, useDisclosure } from "@chakra-ui/react";
+import React from "react";
 
 const ShowTodo = () => {
     const [todoData, setTodoData] = useState([])
     const [checkedTasks, setCheckedTasks] = useState<boolean[]>([]);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editValue, setEditValue] = useState<string>("");
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const cancelRef = React.useRef()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,7 +55,7 @@ const ShowTodo = () => {
         <div className="justify-center items-center grid grid-cols-3 px-6 gap-6">
             {todoData?.map((todo: any, index: number) =>
                 <div className="flex border rounded-md items-center justify-between shadow-md hover:shadow-none" key={index}>{editingIndex === index ? (
-                    <input
+                    <Input
                         type="text"
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}

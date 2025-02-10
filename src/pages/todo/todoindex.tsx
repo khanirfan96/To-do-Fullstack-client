@@ -2,7 +2,7 @@ import React from 'react'
 import AddTodo from './addtodo'
 import ShowTodo from './showtodo'
 
-const Index = () => {
+const TodoIndex = () => {
   return (
     <div className='h-full w-full p-0 m-0'>
         <AddTodo />
@@ -11,4 +11,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default TodoIndex

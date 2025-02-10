@@ -1,8 +1,10 @@
-import API_URL from "./api_url";
-import {toast} from 'react-toastify';
+import { TODO_API_URL } from "./api_url";
+import { CALORIE_API_URL } from "./api_url";
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 export const getTodo = async () => {
-    const url = API_URL + 'gettodo';
+    const url = TODO_API_URL + 'gettodo';
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -10,15 +12,15 @@ export const getTodo = async () => {
         }
 
         const json = await response.json();
-        return json; 
+        return json;
     } catch (error: any) {
         console.error(error.message);
         return [];
     }
 }
 
-export const postTodo = async (todo:string) =>{
-    const request = new Request(API_URL + 'posttodo', {
+export const postTodo = async (todo: string) => {
+    const request = new Request(TODO_API_URL + 'posttodo', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
@@ -41,8 +43,10 @@ export const postTodo = async (todo:string) =>{
     }
 }
 
-export const updateTodo = async (id:string, task:any) =>{
-    const request = new Request(API_URL +'puttodo/' + id, {
+
+
+export const updateTodo = async (id: string, task: any) => {
+    const request = new Request(TODO_API_URL + 'puttodo/' + id, {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json'
@@ -60,14 +64,14 @@ export const updateTodo = async (id:string, task:any) =>{
         const data = await response.json();
         toast("Task updated successfully");
     } catch (error: any) {
-        console.error(error.message); 
+        console.error(error.message);
     }
 }
 
-export const deleteTodo = async (id:string) =>{
+export const deleteTodo = async (id: string) => {
     const myHeaders = new Headers();
-    myHeaders.append("Content-Type","application/x-www-form-urlencoded");
-    const request = new Request(API_URL +'deleteonetodo/' + id, {
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    const request = new Request(TODO_API_URL + 'deleteonetodo/' + id, {
         method: "DELETE",
         headers: myHeaders,
     })
@@ -85,7 +89,7 @@ export const deleteTodo = async (id:string) =>{
 }
 
 export const deleteAllTodo = async () => {
-    const request = new Request(API_URL + 'deletetodo', {
+    const request = new Request(TODO_API_URL + 'deletetodo', {
         method: "DELETE",
     })
     try {
@@ -98,4 +102,31 @@ export const deleteAllTodo = async () => {
     } catch (error: any) {
         console.error(error.message); // Log error if any
     }
+}
+
+export const getRecipe = async () => {
+    try {
+        const response = await axios.get(CALORIE_API_URL + 'getrecipe')
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
+}
+
+export const createRecipe = async (formData: any) => {
+    try {
+        const response = await axios.post(CALORIE_API_URL + 'postrecipe', {
+            calorie: parseInt(formData.calorie),
+            dish: formData.dish,
+            fat: parseInt(formData.fat),
+            ingredients: formData.ingredient,
+        })
+        toast("New Calorie added successfully")
+        return response;
+    } catch (error) {
+        console.log(error)
+    }
+
+
 }
