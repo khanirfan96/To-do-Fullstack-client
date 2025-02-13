@@ -5,44 +5,51 @@ import { RxCross2 } from "react-icons/rx";
 import { MdSaveAlt } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
 import { BiSolidEditAlt } from "react-icons/bi";
-import { deleteTodo, getTodo, updateTodo } from "../../utils/methods";
-import { Input, useDisclosure } from "@chakra-ui/react";
+import { deleteCall, getCall, putCall } from "../../utils/methods";
+import { Input, useDisclosure, useToast } from "@chakra-ui/react";
 import React from "react";
+import AlertDialogExample from "../../components/ui/deletedialog";
+
+interface TaskData {
+    task: string;
+    // Add other properties if needed
+  }
 
 const ShowTodo = () => {
     const [todoData, setTodoData] = useState([])
     const [checkedTasks, setCheckedTasks] = useState<boolean[]>([]);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editValue, setEditValue] = useState<string>("");
+    const toast = useToast();
 
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    const cancelRef = React.useRef()
+    // const { isOpen, onOpen, onClose } = useDisclosure()
+    // const cancelRef = React.useRef()
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await getTodo();
+            const data = await getCall({ type: 'todo', url: 'gettodo' });
             setTodoData(data);
         };
         fetchData();
     }, []);
 
     const handleDeleteTodo = async (todo: any) => {
-        deleteTodo(todo._id)
-        setTodoData((prev) => prev.filter((item:any) => item._id !== todo._id));
+        deleteCall('todo', 'deleteonetodo/', todo._id, toast)
+        setTodoData((prev) => prev.filter((item: any) => item._id !== todo._id));
     }
 
     const handleEditTask = (index: number, currentTask: string) => {
         setEditingIndex(index);
         setEditValue(currentTask);
     };
+    console.log(editValue, 'editValue')
 
     const handleSaveEdit = async (todo: any) => {
-        await updateTodo(todo._id, editValue);
-        setTodoData((prev: any) =>prev.map((item: String, idx: number) =>idx === editingIndex ? { ...item, task: editValue } : item));
+        await putCall('todo','puttodo/',todo._id, { task: editValue }, 'Task updated successfully', toast);
+        setTodoData((prev: any) => prev.map((item: any, idx: number) => idx === editingIndex ? { ...item, editValue } : item));
         setEditingIndex(null);
         setEditValue("");
     };
-
 
     const handleCheck = (index: number) => {
         console.log([...checkedTasks])
@@ -61,19 +68,23 @@ const ShowTodo = () => {
                         onChange={(e) => setEditValue(e.target.value)}
                         className="bg-white p-2 w-full border focus:border-none focus:outline-none rounded-md"
                     />
-                    ) : (
+                ) : (
                     <p className={`bg-white p-2 ${checkedTasks[index] ? "line-through" : ""}`}>
                         {todo.task}
                     </p>
-                    )}
-                        <div className="flex gap-2 p-2">
+                )}
+                    <div className="flex gap-2 p-2">
                         {editingIndex === index ? (
-                                <MdSaveAlt className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleSaveEdit(todo)}/>
+                            <MdSaveAlt className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleSaveEdit(todo)} />
                         ) : (
                             <>
-                                    <FaCheck className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleCheck(index)}/>
-                                    <RxCross2 className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleDeleteTodo(todo)}/>
-                                    <MdEdit className="bg-black text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleEditTask(index, todo.task)}/>
+                                <FaCheck className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleCheck(index)} />
+                                <div>
+                                    <AlertDialogExample buttonName={<RxCross2 className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer"/>} 
+                                    heading='Delete Dish' body='Are you sure, you want to delete this particular task?' finalButton='Delete' onClick={() => handleDeleteTodo(todo)} />
+                                </div>
+                                {/* <RxCross2 className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleDeleteTodo(todo)} /> */}
+                                <MdEdit className="bg-black text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleEditTask(index, todo.task)} />
                             </>
                         )}
                     </div>

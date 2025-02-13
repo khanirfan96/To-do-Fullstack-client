@@ -7,7 +7,7 @@ const CalorieIndex = () => {
 
     return (
         <Stack spacing={8} direction='column'>
-            <AddCalorie />
+            {/* <AddCalorie /> */}
             <ShowCalorie />
         </Stack>
     )

@@ -1,22 +1,69 @@
-import { Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useDisclosure } from "@chakra-ui/react"
-import { useState } from "react";
+import { Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useDisclosure, useToast } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { FaFireFlameCurved } from "react-icons/fa6";
-import { createRecipe } from "../../utils/methods";
+import { postCall, putCall } from "../../utils/methods";
 
+interface Recipe {
+    _id: number;
+    calories: number;
+    dish: string;
+    fat: number;
+    ingredients: string;
+}
+interface AddCalorieProps {
+    selectedRecipe: Recipe | null;
+    setSelectedRecipe: (recipe: Recipe | null) => void;
+}
 
+const AddCalorie = ({ selectedRecipe, setSelectedRecipe }: AddCalorieProps) => {
 
-const AddCalorie = () => {
-
-    const [formData, setFormData] = useState({ dish: '', ingredient: '', calorie: '', fat: '' });
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    const initialFormData = { dish: '', ingredient: '', calorie: 0, fat: 0 };
+    const [formData, setFormData] = useState(initialFormData);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const toast = useToast();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
     };
 
-    const handleSaveCalorie = () => {
-        createRecipe(formData)
+    useEffect(() => {
+         console.log(formData, 'ffjfja')
+         console.log(selectedRecipe, 'selectedRecipeselectedRecipe')
+        if (selectedRecipe) {
+            setFormData({
+                dish: selectedRecipe.dish,
+                ingredient: selectedRecipe.ingredients,
+                calorie: selectedRecipe.calories,
+                fat: selectedRecipe.fat
+            });
+            onOpen();
+        }
+    }, [selectedRecipe]);
+
+    
+
+    const handleClose = () => {
+        setFormData(initialFormData);
+        setSelectedRecipe(null);
+        onClose();
+    };
+
+    const handleSaveCalorie = async() => {
+        if (selectedRecipe) {
+            // Handle update
+            await putCall('calorie',`putrecipe/`,selectedRecipe._id,{calorie: formData.calorie, dish: formData.dish, fat: formData.fat, ingredients: formData.ingredient,},
+                'Recipe updated successfully',
+                toast
+            );
+        } else {
+            // Handle new entry
+            await postCall('calorie', 'postrecipe',{ calorie: formData.calorie, dish: formData.dish, fat: formData.fat, ingredients: formData.ingredient,},
+                'New Calorie added successfully',
+                toast
+            );
+        }
+        handleClose();
     }
 
     return (
@@ -29,7 +76,7 @@ const AddCalorie = () => {
             <Modal isOpen={isOpen} onClose={onClose} >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Add your Calories to track</ModalHeader>
+                    <ModalHeader>   {selectedRecipe ? 'Edit Recipe' : 'Add your Calories to track'} </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody pb={6}>
                         <FormControl>
@@ -56,7 +103,7 @@ const AddCalorie = () => {
                         <FormControl mt={4}>
                             <FormLabel>Calories</FormLabel>
                             <Input
-                                type="text"
+                                type="number"
                                 id="calorie"
                                 placeholder='Calories'
                                 value={formData.calorie}
@@ -78,7 +125,7 @@ const AddCalorie = () => {
                     <ModalFooter>
                         <Button onClick={onClose}>Cancel</Button>
                         <Button colorScheme='blue' ml={3} onClick={handleSaveCalorie}>
-                            Save
+                        {selectedRecipe ? 'Update' : 'Save'}
                         </Button>
                     </ModalFooter>
                 </ModalContent>

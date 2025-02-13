@@ -1,32 +1,34 @@
-import { useEffect, useState } from 'react'
 import {
     Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
     TableContainer,
+    Tbody,
+    Td,
+    Th,
+    Thead,
+    Tr
 } from '@chakra-ui/react'
-import { Button } from '@chakra-ui/react'
-import { getRecipe } from '../../utils/methods'
+import { useEffect, useState } from 'react'
+import { Button, useToast } from '@chakra-ui/react'
+import AlertDialogExample from '../../components/ui/deletedialog'
+import { deleteCall, getCall } from '../../utils/methods'
+import AddCalorie from './addcalorie'
 
 interface Recipe {
-    id: number;
-    Calories: number;
-    Dish: string;
-    Fat: number;
-    Ingredients: string;
+    _id: number;
+    calories: number;
+    dish: string;
+    fat: number;
+    ingredients: string;
 }
 
 const ShowCalorie = () => {
     const [calorie, showCalorie] = useState<Recipe[]>([])
+    const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+    const toast = useToast();
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await getRecipe()
+            const data = await getCall({ type: 'calorie', url: 'getrecipe' })
             if (data) {
                 showCalorie(data)
             }
@@ -57,13 +59,14 @@ const ShowCalorie = () => {
     }
 
 
-    const handleDelete = (id: number) => {
+    const handleDelete = async (id: number) => {
         console.log('Delete clicked for id:', id)
-        // Add your delete logic here
+        await deleteCall('calorie', 'deleterecipe/', id, toast)        // Add your delete logic here
     }
 
-    const handleAddIngredient = (id: number) => {
-        console.log('Add ingredient clicked for id:', id)
+    const handleAddIngredient = (recipe: Recipe) => {
+        console.log('Add ingredient clicked for id:', recipe)
+        setSelectedRecipe(recipe);
         // Add your add ingredient logic here
     }
 
@@ -74,6 +77,7 @@ const ShowCalorie = () => {
 
     return (
         <div>
+            <AddCalorie selectedRecipe={selectedRecipe} setSelectedRecipe={setSelectedRecipe} />
             <TableContainer>
                 <Table variant='striped' colorScheme='teal'>
                     <Thead>
@@ -86,34 +90,20 @@ const ShowCalorie = () => {
 
                     <Tbody>
                         {calorie.map((recipe, index) => (
-                            <Tr key={recipe.id || index}>
+                            <Tr key={recipe._id || index}>
                                 {headers.map((header) => (
                                     <Td key={`${index}-${header}`}>
                                         {getValue(recipe, header)?.toString()}
                                     </Td>
                                 ))}
-                                <Td>
-                                    <Button
-                                        colorScheme='red'
-                                        size='sm'
-                                        mr={2}
-                                        onClick={() => handleDelete(recipe.id)}
-                                    >
-                                        Delete
-                                    </Button>
-                                    <Button
-                                        colorScheme='blue'
-                                        size='sm'
-                                        mr={2}
-                                        onClick={() => handleAddIngredient(recipe.id)}
-                                    >
+                                <Td className='flex flex-row space-x-2'>
+                                    <div>
+                                        <AlertDialogExample buttonName='Delete Dish' heading='Delete Dish' body='Are you sure, you want to delete this particular dish?' finalButton='Delete' onClick={() => handleDelete(recipe._id)} />
+                                    </div>
+                                    <Button colorScheme='blue' size='md' mr={2} onClick={() => handleAddIngredient(recipe)}>
                                         Change Ingredient
                                     </Button>
-                                    <Button
-                                        colorScheme='green'
-                                        size='sm'
-                                        onClick={() => handleAddEntry(recipe.id)}
-                                    >
+                                    <Button colorScheme='green' size='md' onClick={() => handleAddEntry(recipe._id)}>
                                         Edit Calories
                                     </Button>
                                 </Td>
@@ -122,7 +112,6 @@ const ShowCalorie = () => {
                     </Tbody>
                 </Table>
             </TableContainer>
-
         </div>
     )
 }
