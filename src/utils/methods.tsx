@@ -15,9 +15,9 @@ interface TodoPayload {
 }
 
 interface CaloriePayload {
-    calorie: number;
-    dish: string;
-    fat: number;
+    calories?: number;
+    dish?: string;
+    fat?: number;
     ingredients: string;
 }
 
@@ -35,11 +35,12 @@ export const getCall = async ({ type, url }: GetCallParams) => {
     }
 }
 
-export const deleteAllCall = async (url: string, successMessage: string = 'Deleted Successfully',toast:any) => {
+export const deleteAllCall = async (type: string, url: string, successMessage: string = 'Deleted Successfully',toast:any) => {
+    const baseUrl = type === 'todo' ? TODO_API_URL : CALORIE_API_URL;
     try {
-        const response = await axios.delete(TODO_API_URL + url)
+        const response = await axios.delete(baseUrl + url)
         toast({
-            title: 'Deleted successfully',
+            title: 'Deleted successfully!!',
             description: successMessage,
             status: 'success',
             duration: 5000, 
@@ -62,6 +63,7 @@ export const deleteAllCall = async (url: string, successMessage: string = 'Delet
 export const postCall = async (type: 'todo' | 'calorie', endpoint: string, data: PostData, successMessage: string = 'Added Successfully', toast: any) => {
     try {
         const baseUrl = type === 'todo' ? TODO_API_URL : CALORIE_API_URL;
+        console.log(data, 'datdtata')
         const response = await axios.post(baseUrl + endpoint, data,
             {
                 headers: {
@@ -70,7 +72,7 @@ export const postCall = async (type: 'todo' | 'calorie', endpoint: string, data:
             }
         );
         toast({
-            title: 'Created successful',
+            title: 'Created successfully!!',
             description: successMessage,
             status: 'success',
             duration: 5000, 
@@ -111,7 +113,7 @@ export const putCall = async (type: 'todo' | 'calorie', endpoint: string, id: nu
        
         const data = await response.data;
         toast({
-            title: 'Created successful',
+            title: 'Updated successfully!!',
             description: data.message || successMessage,
             status: 'success',
             duration: 5000, 

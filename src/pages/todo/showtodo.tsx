@@ -42,7 +42,6 @@ const ShowTodo = () => {
         setEditingIndex(index);
         setEditValue(currentTask);
     };
-    console.log(editValue, 'editValue')
 
     const handleSaveEdit = async (todo: any) => {
         await putCall('todo','puttodo/',todo._id, { task: editValue }, 'Task updated successfully', toast);
@@ -52,7 +51,6 @@ const ShowTodo = () => {
     };
 
     const handleCheck = (index: number) => {
-        console.log([...checkedTasks])
         const updatedCheckedTasks = [...checkedTasks];
         updatedCheckedTasks[index] = !updatedCheckedTasks[index];
         setCheckedTasks(updatedCheckedTasks);
@@ -81,7 +79,7 @@ const ShowTodo = () => {
                                 <FaCheck className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleCheck(index)} />
                                 <div>
                                     <AlertDialogExample buttonName={<RxCross2 className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer"/>} 
-                                    heading='Delete Dish' body='Are you sure, you want to delete this particular task?' finalButton='Delete' onClick={() => handleDeleteTodo(todo)} />
+                                    heading='Delete Task' body='Are you sure, you want to delete this particular task?' finalButton='Delete' onClick={() => handleDeleteTodo(todo)} />
                                 </div>
                                 {/* <RxCross2 className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleDeleteTodo(todo)} /> */}
                                 <MdEdit className="bg-black text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleEditTask(index, todo.task)} />

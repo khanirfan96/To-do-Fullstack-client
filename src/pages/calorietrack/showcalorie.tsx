@@ -10,20 +10,23 @@ import {
 import { useEffect, useState } from 'react'
 import { Button, useToast } from '@chakra-ui/react'
 import AlertDialogExample from '../../components/ui/deletedialog'
-import { deleteCall, getCall } from '../../utils/methods'
+import { deleteAllCall, deleteCall, getCall } from '../../utils/methods'
 import AddCalorie from './addcalorie'
 
 interface Recipe {
     _id: number;
-    calories: number;
+    calories: string;
     dish: string;
-    fat: number;
+    fat: string;
     ingredients: string;
 }
+
+type UpdateType = 'calories' | 'ingredients' | 'add' | null;
 
 const ShowCalorie = () => {
     const [calorie, showCalorie] = useState<Recipe[]>([])
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+    const [updateType, setUpdateType] = useState<UpdateType>(null);
     const toast = useToast();
 
     useEffect(() => {
@@ -51,6 +54,7 @@ const ShowCalorie = () => {
     }
 
     const headers = getHeaders()
+    console.log(calorie, 'djdsajdoiaj')
 
     const getValue = (obj: Recipe, header: string) => {
         const lowerHeader = header.toLowerCase()
@@ -58,26 +62,33 @@ const ShowCalorie = () => {
         return obj[lowerHeader as keyof Recipe] || obj[upperHeader as keyof Recipe]
     }
 
+    const handleAddEntry = (recipe: Recipe) => {
+        console.log('Add entry clicked for id:', recipe)
+        setSelectedRecipe(recipe);
+        setUpdateType('calories');
+    }
 
     const handleDelete = async (id: number) => {
-        console.log('Delete clicked for id:', id)
-        await deleteCall('calorie', 'deleterecipe/', id, toast)        // Add your delete logic here
+        await deleteCall('calorie', 'deleterecipe/', id, toast)     
+    }
+
+    const handleDeleteAll = async () =>{
+        await deleteAllCall('calorie', 'deleterecipe', 'Deleted All Calories Successfully!!', toast)
     }
 
     const handleAddIngredient = (recipe: Recipe) => {
         console.log('Add ingredient clicked for id:', recipe)
         setSelectedRecipe(recipe);
-        // Add your add ingredient logic here
-    }
+        setUpdateType('ingredients');
 
-    const handleAddEntry = (id: number) => {
-        console.log('Add entry clicked for id:', id)
-        // Add your add entry logic here
     }
 
     return (
         <div>
-            <AddCalorie selectedRecipe={selectedRecipe} setSelectedRecipe={setSelectedRecipe} />
+            <div className='flex flex-row justify-between px-5 items-center'>
+                <AddCalorie selectedRecipe={selectedRecipe} setSelectedRecipe={setSelectedRecipe} updateType={updateType} />
+                <AlertDialogExample buttonName='Delete Calories' heading='Delete All Calories' body='Are you sure, you want to delete all your calories?' finalButton='Delete' onClick={() => handleDeleteAll()} />
+            </div>
             <TableContainer>
                 <Table variant='striped' colorScheme='teal'>
                     <Thead>
@@ -103,7 +114,7 @@ const ShowCalorie = () => {
                                     <Button colorScheme='blue' size='md' mr={2} onClick={() => handleAddIngredient(recipe)}>
                                         Change Ingredient
                                     </Button>
-                                    <Button colorScheme='green' size='md' onClick={() => handleAddEntry(recipe._id)}>
+                                    <Button colorScheme='green' size='md' onClick={() => handleAddEntry(recipe)}>
                                         Edit Calories
                                     </Button>
                                 </Td>

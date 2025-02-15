@@ -15,7 +15,7 @@ const AddTodo = () => {
     };
 
     const handleDeleteAll = async () => {
-        await deleteAllCall('deletetodo', "All Task deleted successfully", toast)
+        await deleteAllCall('todo','deletetodo', "All Task deleted successfully", toast)
     }
 
     return (

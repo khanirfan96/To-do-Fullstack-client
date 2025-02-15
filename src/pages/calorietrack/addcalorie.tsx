@@ -5,20 +5,24 @@ import { postCall, putCall } from "../../utils/methods";
 
 interface Recipe {
     _id: number;
-    calories: number;
+    calories: string;
     dish: string;
-    fat: number;
+    fat: string;
     ingredients: string;
 }
+
+type UpdateType = 'calories' | 'ingredients' | 'add' | null;
 interface AddCalorieProps {
     selectedRecipe: Recipe | null;
     setSelectedRecipe: (recipe: Recipe | null) => void;
+    updateType?: UpdateType;
 }
 
-const AddCalorie = ({ selectedRecipe, setSelectedRecipe }: AddCalorieProps) => {
+const AddCalorie = ({ selectedRecipe, setSelectedRecipe, updateType = null }: AddCalorieProps) => {
 
-    const initialFormData = { dish: '', ingredient: '', calorie: 0, fat: 0 };
+    const initialFormData = { dish: '', ingredient: '', calories: '', fat: '' };
     const [formData, setFormData] = useState(initialFormData);
+    const [currentUpdateType, setCurrentUpdateType] = useState<UpdateType>(updateType);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
 
@@ -27,38 +31,49 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe }: AddCalorieProps) => {
         setFormData(prev => ({ ...prev, [id]: value }));
     };
 
+    console.log(updateType, 'updateTypeupdateType')
+
     useEffect(() => {
-         console.log(formData, 'ffjfja')
-         console.log(selectedRecipe, 'selectedRecipeselectedRecipe')
         if (selectedRecipe) {
             setFormData({
                 dish: selectedRecipe.dish,
                 ingredient: selectedRecipe.ingredients,
-                calorie: selectedRecipe.calories,
+                calories: selectedRecipe.calories,
                 fat: selectedRecipe.fat
             });
+            setCurrentUpdateType(updateType);
             onOpen();
         }
-    }, [selectedRecipe]);
+    }, [selectedRecipe, updateType]);
 
-    
+
 
     const handleClose = () => {
         setFormData(initialFormData);
         setSelectedRecipe(null);
+        setCurrentUpdateType(null);
         onClose();
     };
 
-    const handleSaveCalorie = async() => {
-        if (selectedRecipe) {
+    // useEffect(()=>{
+
+    // },[handleClose()])
+
+    const handleSaveCalorie = async () => {
+        if (selectedRecipe && updateType === 'calories') {
             // Handle update
-            await putCall('calorie',`putrecipe/`,selectedRecipe._id,{calorie: formData.calorie, dish: formData.dish, fat: formData.fat, ingredients: formData.ingredient,},
+            await putCall('calorie', `putrecipe/`, selectedRecipe._id, { calories: parseInt(formData.calories), dish: formData.dish, fat: parseInt(formData.fat), ingredients: formData.ingredient, },
+                'Recipe updated successfully',
+                toast
+            );
+        } else if (selectedRecipe && updateType === 'ingredients') {
+            await putCall('calorie', `putingredients/`, selectedRecipe._id, { ingredients: formData.ingredient },
                 'Recipe updated successfully',
                 toast
             );
         } else {
             // Handle new entry
-            await postCall('calorie', 'postrecipe',{ calorie: formData.calorie, dish: formData.dish, fat: formData.fat, ingredients: formData.ingredient,},
+            await postCall('calorie', 'postrecipe', { calories: parseInt(formData.calories), dish: formData.dish, fat: parseInt(formData.fat), ingredients: formData.ingredient, },
                 'New Calorie added successfully',
                 toast
             );
@@ -85,6 +100,7 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe }: AddCalorieProps) => {
                                 type="text"
                                 id="dish"
                                 placeholder='Dish'
+                                disabled={updateType==='ingredients'}
                                 value={formData.dish}
                                 onChange={handleChange}
                             />
@@ -103,19 +119,21 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe }: AddCalorieProps) => {
                         <FormControl mt={4}>
                             <FormLabel>Calories</FormLabel>
                             <Input
-                                type="number"
-                                id="calorie"
+                                type="text"
+                                id="calories"
                                 placeholder='Calories'
-                                value={formData.calorie}
+                                disabled={updateType==='ingredients'}
+                                value={formData.calories}
                                 onChange={handleChange}
                             />
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Fat</FormLabel>
                             <Input
-                                type="number"
+                                type="text"
                                 id="fat"
                                 placeholder='Fat'
+                                disabled={updateType==='ingredients'}
                                 value={formData.fat}
                                 onChange={handleChange}
                             />
@@ -125,7 +143,7 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe }: AddCalorieProps) => {
                     <ModalFooter>
                         <Button onClick={onClose}>Cancel</Button>
                         <Button colorScheme='blue' ml={3} onClick={handleSaveCalorie}>
-                        {selectedRecipe ? 'Update' : 'Save'}
+                            {selectedRecipe ? 'Update' : 'Save'}
                         </Button>
                     </ModalFooter>
                 </ModalContent>
