@@ -1,14 +1,15 @@
 import {
+    Button,
     Table,
     TableContainer,
     Tbody,
     Td,
     Th,
     Thead,
-    Tr
+    Tr,
+    useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { Button, useToast } from '@chakra-ui/react'
 import AlertDialogExample from '../../components/ui/deletedialog'
 import { deleteAllCall, deleteCall, getCall } from '../../utils/methods'
 import AddCalorie from './addcalorie'
@@ -54,7 +55,6 @@ const ShowCalorie = () => {
     }
 
     const headers = getHeaders()
-    console.log(calorie, 'djdsajdoiaj')
 
     const getValue = (obj: Recipe, header: string) => {
         const lowerHeader = header.toLowerCase()
@@ -63,7 +63,6 @@ const ShowCalorie = () => {
     }
 
     const handleAddEntry = (recipe: Recipe) => {
-        console.log('Add entry clicked for id:', recipe)
         setSelectedRecipe(recipe);
         setUpdateType('calories');
     }
@@ -77,7 +76,6 @@ const ShowCalorie = () => {
     }
 
     const handleAddIngredient = (recipe: Recipe) => {
-        console.log('Add ingredient clicked for id:', recipe)
         setSelectedRecipe(recipe);
         setUpdateType('ingredients');
 

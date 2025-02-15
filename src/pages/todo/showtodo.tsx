@@ -1,14 +1,11 @@
 
+import { Input, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
+import { MdEdit, MdSaveAlt } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
-import { MdSaveAlt } from "react-icons/md";
-import { MdEdit } from "react-icons/md";
-import { BiSolidEditAlt } from "react-icons/bi";
-import { deleteCall, getCall, putCall } from "../../utils/methods";
-import { Input, useDisclosure, useToast } from "@chakra-ui/react";
-import React from "react";
 import AlertDialogExample from "../../components/ui/deletedialog";
+import { deleteCall, getCall, putCall } from "../../utils/methods";
 
 interface TaskData {
     task: string;

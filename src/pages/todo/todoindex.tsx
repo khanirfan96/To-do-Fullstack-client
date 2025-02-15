@@ -1,4 +1,3 @@
-import React from 'react'
 import AddTodo from './addtodo'
 import ShowTodo from './showtodo'
 

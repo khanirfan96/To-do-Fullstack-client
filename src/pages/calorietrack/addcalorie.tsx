@@ -55,10 +55,6 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe, updateType = null }: Ad
         onClose();
     };
 
-    // useEffect(()=>{
-
-    // },[handleClose()])
-
     const handleSaveCalorie = async () => {
         if (selectedRecipe && updateType === 'calories') {
             // Handle update
