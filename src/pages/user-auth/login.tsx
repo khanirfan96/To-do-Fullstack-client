@@ -14,6 +14,7 @@ const Login = () => {
     const { login } = useContext(AuthContext) || {};
     // const [form, setForm] = useState<FormData>({ first_name: '', last_name: '', email: '', password: '', phone: '' })
     const [form, setForm] = useState<FormData>({ email: '', password: ''})
+    const [error, setError] = useState("");
 
     const handleInputChange = (e: any) => {
         const { id, value } = e.target;
@@ -22,10 +23,14 @@ const Login = () => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (login) {
-          await login(form);
+        try {
+            if (login) {
+                await login(form);
+            }
+        } catch (error) {
+            setError("Login failed. Please check your credentials.");
         }
-      };
+    };
 
     const handleSignUp = () => {
         console.log(form, 'form')
@@ -75,7 +80,7 @@ const Login = () => {
                             />
                             {errors.last_name && (<FormErrorMessage>Last Name is required.</FormErrorMessage>)}
                         </FormControl> */}
-                        <FormControl isRequired isInvalid={errors.email}>
+                        <FormControl isRequired>
                             <FormLabel color="white">Email</FormLabel>
                             <Input
                                 type='email'
