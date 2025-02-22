@@ -1,20 +1,21 @@
 import { useState } from 'react'
-import { deleteAllTodo, postTodo } from '../../utils/methods';
-import { Button, FormControl, Input } from '@chakra-ui/react';
+import { deleteAllCall, postCall } from '../../utils/methods';
+import { Button, FormControl, Input, useToast } from '@chakra-ui/react';
 
 const AddTodo = () => {
     const [todo, setTodo] = useState('')
+    const toast = useToast();
 
     const handletodoChange = (e: any) => {
         setTodo(e.target.value)
     }
 
     const handleSubmit = () => {
-        postTodo(todo)
+        postCall('todo', 'posttodo', { task: todo, status: true }, 'New Task added successfully', toast)
     };
 
-    const handleDeleteAll = () => {
-        deleteAllTodo()
+    const handleDeleteAll = async () => {
+        await deleteAllCall('todo','deletetodo', "All Task deleted successfully", toast)
     }
 
     return (

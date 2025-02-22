@@ -14,6 +14,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "axios": "^1.7.9",
+<<<<<<< HEAD
     "framer-motion": "^12.0.6",
     "jwt-decode": "^4.0.0",
     "next-themes": "^0.4.4",
@@ -22,6 +23,13 @@
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.1.5",
     "react-toastify": "^11.0.2"
+=======
+    "framer-motion": "^12.4.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.4.0",
+    "react-router-dom": "^7.1.5"
+>>>>>>> 6033f99abb4794a4405c69290c2c44507f3943fd
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
