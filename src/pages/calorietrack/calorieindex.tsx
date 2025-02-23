@@ -1,14 +1,13 @@
-import { Stack } from "@chakra-ui/react"
-import AddCalorie from "./addcalorie"
+import Navbar from "../navbar"
 import ShowCalorie from "./showcalorie"
-
 
 const CalorieIndex = () => {
 
     return (
-        <Stack spacing={8} direction='column'>
+        <div className='h-full w-full p-0 m-0'>
+            <Navbar />
             <ShowCalorie />
-        </Stack>
+        </div>
     )
 }
 

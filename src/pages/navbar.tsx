@@ -10,9 +10,11 @@ import {
     Flex,
     HStack,
     IconButton,
+    Image,
     Input,
     InputGroup,
     InputLeftElement,
+    Link,
     Menu,
     MenuButton,
     MenuItem,
@@ -20,14 +22,11 @@ import {
     VStack,
     useColorMode,
     useColorModeValue,
-    useDisclosure,
-    Image,
-    Link
+    useDisclosure
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiMenu, FiMoon, FiSearch, FiSun, FiX } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
-import hc from '../assets/images/hc.jpg'
 import CustomNavLink from "../utils/customnav";
 
 const Navbar = () => {
@@ -54,10 +53,8 @@ const Navbar = () => {
                         <Image src="/images/HC-logo.jpg" alt="Logo" h={14} w={20} />
                     </Link>
                     <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
-                        <CustomNavLink to="/">Home</CustomNavLink>
+                        <CustomNavLink to="/todo">Home</CustomNavLink>
                         <CustomNavLink to="/calorie">Track Calories</CustomNavLink>
-                        {/* <NavLink to="/services">Services</NavLink>
-            <NavLink to="/contact">Contact</NavLink> */}
                     </HStack>
                 </HStack>
 
@@ -102,18 +99,12 @@ const Navbar = () => {
                     <DrawerCloseButton />
                     <DrawerBody>
                         <VStack spacing={4} mt={8}>
-                            <NavLink to="/" onClick={onClose}>
+                            <NavLink to="/todo" onClick={onClose}>
                                 Home
                             </NavLink>
                             <NavLink to="/calorie" onClick={onClose}>
                                 Track Calories
                             </NavLink>
-                            {/* <NavLink to="/services" onClick={onClose}>
-                Services
-              </NavLink>
-              <NavLink to="/contact" onClick={onClose}>
-                Contact
-              </NavLink> */}
                         </VStack>
                     </DrawerBody>
                 </DrawerContent>

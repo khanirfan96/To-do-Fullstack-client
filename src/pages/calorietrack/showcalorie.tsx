@@ -11,55 +11,53 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import AlertDialogExample from '../../components/ui/deletedialog'
-import { deleteAllCall, deleteCall, getCall } from '../../utils/methods'
+import useAuthStore from '../../store/todo'
 import AddCalorie from './addcalorie'
-
-interface Recipe {
-    _id: number;
-    calories: string;
-    dish: string;
-    fat: string;
-    ingredients: string;
-}
-
-type UpdateType = 'calories' | 'ingredients' | 'add' | null;
+import {  Recipe, RecipeHeader, UpdateType } from './types'
 
 const ShowCalorie = () => {
-    const [calorie, showCalorie] = useState<Recipe[]>([])
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
     const [updateType, setUpdateType] = useState<UpdateType>(null);
     const toast = useToast();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await getCall({ type: 'calorie', url: 'getrecipe' })
-            if (data) {
-                showCalorie(data)
-            }
-        }
-        fetchData()
-    }, [])
+    // Get store functions and data
+    const { data, fetchData, deleteOneData, deleteData } = useAuthStore();
+    const calories = data.calories as Recipe[];
 
-    const getHeaders = () => {
-        const allKeys = calorie.reduce((keys, obj) => {
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                await fetchData('calorie', 'getrecipe');
+            } catch (error) {
+                toast({ title: "Error", description: "Failed to load calories data", status: "error", duration: 3000, isClosable: true });
+            }
+        };
+        loadData();
+    }, [fetchData, toast]);
+
+    const getHeaders = (): RecipeHeader[] => {
+        if (!calories.length) return ['dish', 'ingredients', 'calories', 'fat'] as RecipeHeader[];
+    
+        const allKeys = calories.reduce((keys, obj) => {
             Object.keys(obj).forEach(key => {
-                if (key !== '_id') {
-                    // Capitalize first letter for consistency
-                    const normalizedKey = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
-                    keys.add(normalizedKey)
+                if (key !== '_id' && typeof obj[key] !== 'number') {
+                    keys.add(key as RecipeHeader);
                 }
-            })
-            return keys
-        }, new Set<string>())
-        return Array.from(allKeys)
-    }
+            });
+            return keys;
+        }, new Set<RecipeHeader>());
+        return Array.from(allKeys);
+    };
+    
+    const getDisplayHeader = (header: string): string => {
+        return header.charAt(0).toUpperCase() + header.slice(1).toLowerCase();
+    };
 
     const headers = getHeaders()
 
-    const getValue = (obj: Recipe, header: string) => {
-        const lowerHeader = header.toLowerCase()
-        const upperHeader = header.charAt(0).toUpperCase() + header.slice(1)
-        return obj[lowerHeader as keyof Recipe] || obj[upperHeader as keyof Recipe]
+    const getValue = (recipe: Recipe, header: RecipeHeader):string => {
+        const value = recipe[header];
+        return value?.toString() || '';
     }
 
     const handleAddEntry = (recipe: Recipe) => {
@@ -67,13 +65,26 @@ const ShowCalorie = () => {
         setUpdateType('calories');
     }
 
+   
     const handleDelete = async (id: number) => {
-        await deleteCall('calorie', 'deleterecipe/', id, toast)     
-    }
+        try {
+            await deleteOneData('calorie', `deleterecipe/`, id);
+            toast({ title: "Success", description: "Recipe deleted successfully", status: "success", duration: 3000, isClosable: true });
+            // Data will be automatically refreshed by the store
+        } catch (error) {
+            toast({ title: "Error", description: "Failed to delete recipe", status: "error", duration: 3000, isClosable: true });
+        }
+    };
 
-    const handleDeleteAll = async () =>{
-        await deleteAllCall('calorie', 'deleterecipe', 'Deleted All Calories Successfully!!', toast)
-    }
+    const handleDeleteAll = async () => {
+        try {
+            await deleteData('calorie', 'deleterecipe');
+            toast({ title: "Success", description: "All calories deleted successfully", status: "success", duration: 3000, isClosable: true });
+            // Data will be automatically refreshed by the store
+        } catch (error) {
+            toast({ title: "Error", description: "Failed to delete all recipes", status: "error", duration: 3000, isClosable: true });
+        }
+    };
 
     const handleAddIngredient = (recipe: Recipe) => {
         setSelectedRecipe(recipe);
@@ -85,24 +96,25 @@ const ShowCalorie = () => {
         <div>
             <div className='flex flex-row justify-between px-5 items-center'>
                 <AddCalorie selectedRecipe={selectedRecipe} setSelectedRecipe={setSelectedRecipe} updateType={updateType} />
-                <AlertDialogExample buttonName='Delete Calories' heading='Delete All Calories' body='Are you sure, you want to delete all your calories?' finalButton='Delete' onClick={() => handleDeleteAll()} />
+                <AlertDialogExample buttonName='Delete Calories' heading='Delete All Calories' body='Are you sure, you want to delete all your calories?' finalButton='Delete' onClick={handleDeleteAll} />
             </div>
             <TableContainer>
                 <Table variant='striped' colorScheme='teal'>
                     <Thead>
                         <Tr>
                             {headers.map((header) => (
-                                <Th key={header}>{header}</Th>
+                                <Th key={header}>{getDisplayHeader(header)}</Th>
                             ))}
+                            <Th>Actions</Th>
                         </Tr>
                     </Thead>
 
                     <Tbody>
-                        {calorie.map((recipe, index) => (
+                        {calories.map((recipe, index) => (
                             <Tr key={recipe._id || index}>
                                 {headers.map((header) => (
                                     <Td key={`${index}-${header}`}>
-                                        {getValue(recipe, header)?.toString()}
+                                        {getValue(recipe, header)}
                                     </Td>
                                 ))}
                                 <Td className='flex flex-row space-x-2'>

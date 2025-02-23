@@ -1,37 +1,23 @@
+import { FC } from 'react';
 import { Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useDisclosure, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FaFireFlameCurved } from "react-icons/fa6";
-import { postCall, putCall } from "../../utils/methods";
+import useAuthStore from "../../store/todo";
+import { AddCalorieProps, UpdateType } from "./types";
 
-interface Recipe {
-    _id: number;
-    calories: string;
-    dish: string;
-    fat: string;
-    ingredients: string;
-}
-
-type UpdateType = 'calories' | 'ingredients' | 'add' | null;
-interface AddCalorieProps {
-    selectedRecipe: Recipe | null;
-    setSelectedRecipe: (recipe: Recipe | null) => void;
-    updateType?: UpdateType;
-}
-
-const AddCalorie = ({ selectedRecipe, setSelectedRecipe, updateType = null }: AddCalorieProps) => {
+const AddCalorie: FC<AddCalorieProps> = ({ selectedRecipe, setSelectedRecipe, updateType = null }) => {
 
     const initialFormData = { dish: '', ingredient: '', calories: '', fat: '' };
     const [formData, setFormData] = useState(initialFormData);
     const [currentUpdateType, setCurrentUpdateType] = useState<UpdateType>(updateType);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
+    const { postData, fetchData, putData } = useAuthStore();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
     };
-
-    console.log(updateType, 'updateTypeupdateType')
 
     useEffect(() => {
         if (selectedRecipe) {
@@ -56,26 +42,66 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe, updateType = null }: Ad
     };
 
     const handleSaveCalorie = async () => {
-        if (selectedRecipe && updateType === 'calories') {
-            // Handle update
-            await putCall('calorie', `putrecipe/`, selectedRecipe._id, { calories: parseInt(formData.calories), dish: formData.dish, fat: parseInt(formData.fat), ingredients: formData.ingredient, },
-                'Recipe updated successfully',
-                toast
-            );
-        } else if (selectedRecipe && updateType === 'ingredients') {
-            await putCall('calorie', `putingredients/`, selectedRecipe._id, { ingredients: formData.ingredient },
-                'Recipe updated successfully',
-                toast
-            );
-        } else {
-            // Handle new entry
-            await postCall('calorie', 'postrecipe', { calories: parseInt(formData.calories), dish: formData.dish, fat: parseInt(formData.fat), ingredients: formData.ingredient, },
-                'New Calorie added successfully',
-                toast
-            );
+        try {
+            if (selectedRecipe && updateType === 'calories') {
+                // Handle calories update
+                await putData('calorie', `putrecipe/`,selectedRecipe._id, {
+                    calories: parseInt(formData.calories),
+                    dish: formData.dish,
+                    fat: parseInt(formData.fat),
+                    ingredients: formData.ingredient,
+                });
+                toast({ title: "Added", description: "Recipe updated successfully", status: "success", duration: 3000, isClosable: true });
+            } else if (selectedRecipe && updateType === 'ingredients') {
+                // Handle ingredients update
+                await putData('calorie', `putingredients/`,selectedRecipe._id, {
+                    ingredients: formData.ingredient
+                });
+                toast({
+                    title: "Added",
+                    description: "Recipe ingredients updated successfully",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            } else {
+                // Handle new entry
+                await postData('calorie', 'postrecipe', {
+                    calories: parseInt(formData.calories),
+                    dish: formData.dish,
+                    fat: parseInt(formData.fat),
+                    ingredients: formData.ingredient,
+                });
+                toast({
+                    title: "Success",
+                    description: "New Calorie added successfully",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
+
+            // Refresh the calories data
+            await fetchData('calorie', 'getrecipe');
+            handleClose();
+        } catch (error: any) {
+            toast({
+                title: "Error",
+                description: error.message || "Failed to save recipe",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
         }
-        handleClose();
-    }
+    };
+
+    const validateForm = () => {
+        if (!updateType || updateType === 'calories') {
+            return !formData.dish || !formData.calories || !formData.fat;
+        }
+        return !formData.ingredient;
+    };
+
 
     return (
         <div >
@@ -84,7 +110,7 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe, updateType = null }: Ad
                     Add your Calories
                 </Button>
             </Stack>
-            <Modal isOpen={isOpen} onClose={onClose} >
+            <Modal isOpen={isOpen} onClose={handleClose} >
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>   {selectedRecipe ? 'Edit Recipe' : 'Add your Calories to track'} </ModalHeader>
@@ -96,7 +122,7 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe, updateType = null }: Ad
                                 type="text"
                                 id="dish"
                                 placeholder='Dish'
-                                disabled={updateType==='ingredients'}
+                                disabled={updateType === 'ingredients'}
                                 value={formData.dish}
                                 onChange={handleChange}
                             />
@@ -118,7 +144,7 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe, updateType = null }: Ad
                                 type="text"
                                 id="calories"
                                 placeholder='Calories'
-                                disabled={updateType==='ingredients'}
+                                disabled={updateType === 'ingredients'}
                                 value={formData.calories}
                                 onChange={handleChange}
                             />
@@ -129,7 +155,7 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe, updateType = null }: Ad
                                 type="text"
                                 id="fat"
                                 placeholder='Fat'
-                                disabled={updateType==='ingredients'}
+                                disabled={updateType === 'ingredients'}
                                 value={formData.fat}
                                 onChange={handleChange}
                             />
@@ -137,7 +163,7 @@ const AddCalorie = ({ selectedRecipe, setSelectedRecipe, updateType = null }: Ad
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button onClick={onClose}>Cancel</Button>
+                        <Button onClick={handleClose}>Cancel</Button>
                         <Button colorScheme='blue' ml={3} onClick={handleSaveCalorie}>
                             {selectedRecipe ? 'Update' : 'Save'}
                         </Button>

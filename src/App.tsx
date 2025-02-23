@@ -1,31 +1,60 @@
-import { BrowserRouter as Router, Routes, Route, Navigate  } from "react-router-dom";
-import AuthProvider from "./auth/authcontext";
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import useAuthStore from './store/todo';
 import ProtectedRoute from "./auth/protectroute";
-// import Dashboard from "./pages/Dashboard";
-import TodoIndex from "./pages/todo/todoindex";
 import CalorieIndex from "./pages/calorietrack/calorieindex";
-import Navbar from "./pages/navbar";
-import Login from "./pages/user-auth/login";
 import Dashboard from "./pages/dashboard/dashboard";
+import TodoIndex from "./pages/todo/todoindex";
+import Login from "./pages/userAuth/login";
+import SignUp from "./pages/userAuth/signup";
+
+const NavigationSetter = () => {
+  const setNavigate = useAuthStore(state => state.setNavigate);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setNavigate(navigate);
+  }, [navigate, setNavigate]);
+
+  return null;
+};
 
 
 const App = () => {
   return (
-    <Router>
-    <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-    </AuthProvider>
-    </Router>
+    <BrowserRouter>
+      <NavigationSetter />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/todo"
+          element={
+            <ProtectedRoute>
+              <TodoIndex />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/calorie"
+          element={
+            <ProtectedRoute>
+              <CalorieIndex />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

@@ -5,35 +5,40 @@ import { FaCheck } from "react-icons/fa6";
 import { MdEdit, MdSaveAlt } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import AlertDialogExample from "../../components/ui/deletedialog";
-import { deleteCall, getCall, putCall } from "../../utils/methods";
-
-interface TaskData {
-    task: string;
-    // Add other properties if needed
-  }
+import useAuthStore from "../../store/todo";
 
 const ShowTodo = () => {
-    const [todoData, setTodoData] = useState([])
-    const [checkedTasks, setCheckedTasks] = useState<boolean[]>([]);
+    const toast = useToast();
+    const { data, fetchData, postData, deleteData } = useAuthStore();
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editValue, setEditValue] = useState<string>("");
-    const toast = useToast();
+    const [checkedTasks, setCheckedTasks] = useState<boolean[]>([]);
 
-    // const { isOpen, onOpen, onClose } = useDisclosure()
-    // const cancelRef = React.useRef()
+    const todos = data.todos;
+
+    const loadTodos = async () => {
+        try {
+            await fetchData('todo', 'gettodo');
+            setCheckedTasks(new Array(data.todos.length).fill(false));
+        } catch (error) {
+            toast({ title: "Error", description: "Failed to load todos", status: "error", duration: 3000, isClosable: true });
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            const data = await getCall({ type: 'todo', url: 'gettodo' });
-            setTodoData(data);
-        };
-        fetchData();
-    }, []);
+        loadTodos();
+    }, [fetchData, toast]);
 
     const handleDeleteTodo = async (todo: any) => {
-        deleteCall('todo', 'deleteonetodo/', todo._id, toast)
-        setTodoData((prev) => prev.filter((item: any) => item._id !== todo._id));
-    }
+        try {
+            await deleteData('todo', `deleteonetodo/${todo._id}`);
+            toast({ title: "Success", description: "Task deleted successfully", status: "success", duration: 3000, isClosable: true });
+            // Refresh todos after deletion
+            await fetchData('todo', 'gettodo');
+        } catch (error) {
+            toast({ title: "Error", description: "Failed to delete task", status: "error", duration: 3000, isClosable: true });
+        }
+    };
 
     const handleEditTask = (index: number, currentTask: string) => {
         setEditingIndex(index);
@@ -41,27 +46,41 @@ const ShowTodo = () => {
     };
 
     const handleSaveEdit = async (todo: any) => {
-        await putCall('todo','puttodo/',todo._id, { task: editValue }, 'Task updated successfully', toast);
-        setTodoData((prev: any) => prev.map((item: any, idx: number) => idx === editingIndex ? { ...item, editValue } : item));
+        try {
+            await postData('todo', `puttodo/${todo._id}`, { task: editValue });
+            toast({ title: "Success", description: "Task updated successfully", status: "success", duration: 3000, isClosable: true });
+            setEditingIndex(null);
+            setEditValue("");
+            // Refresh todos after update
+            await fetchData('todo', 'gettodo');
+        } catch (error) {
+            toast({ title: "Error", description: "Failed to update task", status: "error", duration: 3000, isClosable: true });
+        }
+    };
+
+    const handleCheck = (index: number) => {
+        setCheckedTasks(prev => {
+            const updated = [...prev];
+            updated[index] = !updated[index];
+            return updated;
+        });
+    };
+
+    const handleCancelEdit = () => {
         setEditingIndex(null);
         setEditValue("");
     };
 
-    const handleCheck = (index: number) => {
-        const updatedCheckedTasks = [...checkedTasks];
-        updatedCheckedTasks[index] = !updatedCheckedTasks[index];
-        setCheckedTasks(updatedCheckedTasks);
-    };
-
     return (
         <div className="justify-center items-center grid grid-cols-3 px-6 gap-6">
-            {todoData?.map((todo: any, index: number) =>
-                <div className="flex border rounded-md items-center justify-between shadow-md hover:shadow-none" key={index}>{editingIndex === index ? (
+            {todos?.map((todo: any, index: number) =>
+                <div className="flex border rounded-md items-center justify-between shadow-md hover:shadow-none" key={todo._id || index}>{editingIndex === index ? (
                     <Input
                         type="text"
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
                         className="bg-white p-2 w-full border focus:border-none focus:outline-none rounded-md"
+                        autoFocus
                     />
                 ) : (
                     <p className={`bg-white p-2 ${checkedTasks[index] ? "line-through" : ""}`}>
@@ -70,15 +89,18 @@ const ShowTodo = () => {
                 )}
                     <div className="flex gap-2 p-2">
                         {editingIndex === index ? (
-                            <MdSaveAlt className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleSaveEdit(todo)} />
+                            <>
+                                <MdSaveAlt className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleSaveEdit(todo)} />
+                                <RxCross2
+                                    className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer"
+                                    onClick={handleCancelEdit}
+                                />
+                            </>
                         ) : (
                             <>
                                 <FaCheck className="bg-green-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleCheck(index)} />
-                                <div>
-                                    <AlertDialogExample buttonName={<RxCross2 className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer"/>} 
+                                <AlertDialogExample buttonName={<RxCross2 className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer" />}
                                     heading='Delete Task' body='Are you sure, you want to delete this particular task?' finalButton='Delete' onClick={() => handleDeleteTodo(todo)} />
-                                </div>
-                                {/* <RxCross2 className="bg-red-600 text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleDeleteTodo(todo)} /> */}
                                 <MdEdit className="bg-black text-white rounded-lg text-xl p-1 cursor-pointer" onClick={() => handleEditTask(index, todo.task)} />
                             </>
                         )}
