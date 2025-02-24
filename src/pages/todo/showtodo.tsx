@@ -9,7 +9,7 @@ import useAuthStore from "../../store/todo";
 
 const ShowTodo = () => {
     const toast = useToast();
-    const { data, fetchData, postData, deleteData } = useAuthStore();
+    const { data, fetchData, deleteData, putData} = useAuthStore();
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editValue, setEditValue] = useState<string>("");
     const [checkedTasks, setCheckedTasks] = useState<boolean[]>([]);
@@ -47,7 +47,7 @@ const ShowTodo = () => {
 
     const handleSaveEdit = async (todo: any) => {
         try {
-            await postData('todo', `puttodo/${todo._id}`, { task: editValue });
+            await putData('todo', `puttodo/`,todo._id, { task: editValue });
             toast({ title: "Success", description: "Task updated successfully", status: "success", duration: 3000, isClosable: true });
             setEditingIndex(null);
             setEditValue("");

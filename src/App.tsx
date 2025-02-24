@@ -19,7 +19,6 @@ const NavigationSetter = () => {
   return null;
 };
 
-
 const App = () => {
   return (
     <BrowserRouter>

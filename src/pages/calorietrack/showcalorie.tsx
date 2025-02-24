@@ -24,6 +24,8 @@ const ShowCalorie = () => {
     const { data, fetchData, deleteOneData, deleteData } = useAuthStore();
     const calories = data.calories as Recipe[];
 
+    console.log(calories, 'fhohfhs')
+
     useEffect(() => {
         const loadData = async () => {
             try {
