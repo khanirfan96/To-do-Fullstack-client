@@ -22,18 +22,30 @@ import {
     VStack,
     useColorMode,
     useColorModeValue,
-    useDisclosure
+    useDisclosure,
+    useToast
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiMenu, FiMoon, FiSearch, FiSun, FiX } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
+import useAuthStore from "../store/todo";
 import CustomNavLink from "../utils/customnav";
 
 const Navbar = () => {
-
+    const logout = useAuthStore(state => state.logout);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { colorMode, toggleColorMode } = useColorMode();
     const [search, setSearch] = useState("");
+    const toast = useToast();
+
+    const handleLogout = async () => {
+        if (logout) {
+            toast({ title: "Thanks for using Health Cart", description: "You have successfully logout from the app", status: "success", duration: 3000, isClosable: true });
+            await logout()
+        } else {
+            toast({ title: "Unable to logout", description: "Please check your network", status: "error", duration: 3000, isClosable: true });
+        }
+    }
 
     return (
         <Box bg={useColorModeValue("gray.100", "gray.900")} px={4} boxShadow="md">
@@ -49,7 +61,7 @@ const Navbar = () => {
 
                 {/* Center: Logo & Links */}
                 <HStack spacing={8} alignItems="center">
-                    <Link as={NavLink} to="/">
+                    <Link as={NavLink} to="/dashboard">
                         <Image src="/images/HC-logo.jpg" alt="Logo" h={14} w={20} />
                     </Link>
                     <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
@@ -86,7 +98,7 @@ const Navbar = () => {
                         <MenuList>
                             <MenuItem>Profile</MenuItem>
                             <MenuItem>Settings</MenuItem>
-                            <MenuItem>Logout</MenuItem>
+                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </MenuList>
                     </Menu>
                 </Flex>

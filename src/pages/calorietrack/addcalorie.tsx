@@ -105,7 +105,7 @@ const AddCalorie: FC<AddCalorieProps> = ({ selectedRecipe, setSelectedRecipe, up
 
     return (
         <div >
-            <Stack direction='row' spacing={4} mt={4} w={"2xl"}>
+            <Stack direction='row' w={"2xl"}>
                 <Button onClick={onOpen} rightIcon={<FaFireFlameCurved />} colorScheme='blue' variant='outline'>
                     Add your Calories
                 </Button>

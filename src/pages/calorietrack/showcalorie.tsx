@@ -91,12 +91,11 @@ const ShowCalorie = () => {
     const handleAddIngredient = (recipe: Recipe) => {
         setSelectedRecipe(recipe);
         setUpdateType('ingredients');
-
     }
 
     return (
         <div>
-            <div className='flex flex-row justify-between px-5 items-center'>
+            <div className='flex flex-row justify-between p-5 items-center'>
                 <AddCalorie selectedRecipe={selectedRecipe} setSelectedRecipe={setSelectedRecipe} updateType={updateType} />
                 <AlertDialogExample buttonName='Delete Calories' heading='Delete All Calories' body='Are you sure, you want to delete all your calories?' finalButton='Delete' onClick={handleDeleteAll} />
             </div>
