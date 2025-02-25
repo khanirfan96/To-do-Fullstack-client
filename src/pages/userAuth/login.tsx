@@ -2,6 +2,7 @@ import { Button, Card, CardBody, CardFooter, CardHeader, FormControl, FormErrorM
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/todo";
+import CustomInput from "../../components/ui/input";
 
 interface FormData {
     email: string;
@@ -14,6 +15,7 @@ const Login = () => {
     const login = useAuthStore(state => state.login);
     const isLoading = useAuthStore(state => state.isLoading);
     const [form, setForm] = useState<FormData>({ email: '', password: '' });
+    const [showErrors, setShowErrors] = useState(false); 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -22,18 +24,17 @@ const Login = () => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        // Validate form
+        setShowErrors(true);
+
         if (!form.email || !form.password) {
             toast({ title: "Error", description: "Please fill in all required fields", status: "error", duration: 3000, isClosable: true });
             return;
         }
 
-        try {
+        if(form){
             await login(form);
-            // Redirect is handled in the store
-        } catch (error: any) {
-            toast({ title: "Login Failed", description: error.message || "Please check your credentials", status: "error", duration: 3000, isClosable: true });
+        } else {
+            toast({ title: "Login Failed", description: "Please Try Again!!", status: "error", duration: 3000, isClosable: true });
         }
     };
 
@@ -43,6 +44,7 @@ const Login = () => {
 
     const handleCancel = () => {
         setForm({ email: '', password: '' });
+        setShowErrors(false); 
     }
 
     const errors = {
@@ -58,36 +60,26 @@ const Login = () => {
                 </CardHeader>
                 <CardBody>
                     <Grid templateColumns="repeat(2, 1fr)" gap="6">
-                        <FormControl isRequired isInvalid={errors.email}>
-                            <FormLabel color="white">Email</FormLabel>
-                            <Input
-                                type='email'
-                                id="email"
-                                placeholder='Email'
-                                value={form.email}
-                                onChange={handleInputChange}
-                                color={'white'}
-                                bg="whiteAlpha.200"
-                                border="1px solid rgba(255, 255, 255, 0.2)"
-                                _placeholder={{ color: "whiteAlpha.500" }}
-                            />
-                            {errors.email && (<FormErrorMessage>Email is required.</FormErrorMessage>)}
-                        </FormControl>
-                        <FormControl isRequired isInvalid={errors.password}>
-                            <FormLabel color="white">Password</FormLabel>
-                            <Input
-                                type='password'
-                                id='password'
-                                placeholder='Password'
-                                value={form.password}
-                                onChange={handleInputChange}
-                                color={'white'}
-                                bg="whiteAlpha.200"
-                                border="1px solid rgba(255, 255, 255, 0.2)"
-                                _placeholder={{ color: "whiteAlpha.500" }}
-                            />
-                            {errors.password && (<FormErrorMessage>Password is required.</FormErrorMessage>)}
-                        </FormControl>
+                        <CustomInput
+                            id="email"
+                            label="Email"
+                            type="email"
+                            value={form.email}
+                            handleInput={handleInputChange}
+                            errorMessage={errors.email ? 'Email is required' : ''}
+                            placeholder="Enter your email"
+                            showError={showErrors}
+                        />
+                        <CustomInput
+                            id="password"
+                            label="Password"
+                            type="password"
+                            value={form.password}
+                            handleInput={handleInputChange}
+                            errorMessage={errors.password ? 'Password is required' : ''}
+                            placeholder="Enter your password"
+                            showError={showErrors}
+                        />
                     </Grid>
                     <Text className="flex flex-row justify-end items-center p-3 text-lg" color={"white"}>
                         New to Health Cart!
@@ -97,19 +89,10 @@ const Login = () => {
                     </Text>
                 </CardBody>
                 <CardFooter justifyContent="flex-end">
-                    <Button 
-                        variant="outline" 
-                        className="text-black bg-white px-2 mx-3" 
-                        onClick={handleCancel}
-                    >
+                    <Button variant="outline" className="text-black bg-white px-2 mx-3" onClick={handleCancel} >
                         Cancel
                     </Button>
-                    <Button 
-                        variant="solid" 
-                        onClick={handleLogin} 
-                        // isLoading={isLoading}
-                        // loadingText="Logging in"
-                    >
+                    <Button variant="solid" onClick={handleLogin} isLoading={isLoading} loadingText="Logging in" >
                         Login
                     </Button>
                 </CardFooter>

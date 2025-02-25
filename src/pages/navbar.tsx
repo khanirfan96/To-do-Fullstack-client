@@ -67,6 +67,7 @@ const Navbar = () => {
                     <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
                         <CustomNavLink to="/todo">Home</CustomNavLink>
                         <CustomNavLink to="/calorie">Track Calories</CustomNavLink>
+                        <CustomNavLink to="/week">Gym Week</CustomNavLink>
                     </HStack>
                 </HStack>
 
@@ -116,6 +117,9 @@ const Navbar = () => {
                             </NavLink>
                             <NavLink to="/calorie" onClick={onClose}>
                                 Track Calories
+                            </NavLink>
+                            <NavLink to="/week" onClick={onClose}>
+                                Gym Week
                             </NavLink>
                         </VStack>
                     </DrawerBody>
