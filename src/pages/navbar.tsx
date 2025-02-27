@@ -30,12 +30,15 @@ import { FiMenu, FiMoon, FiSearch, FiSun, FiX } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
 import useAuthStore from "../store/todo";
 import CustomNavLink from "../utils/customnav";
+import ChangePassword from "./userAuth/changepassword";
 
 const Navbar = () => {
     const logout = useAuthStore(state => state.logout);
+    const user = useAuthStore(state =>state.user)
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { colorMode, toggleColorMode } = useColorMode();
     const [search, setSearch] = useState("");
+    const [password, setPassword] = useState(false)
     const toast = useToast();
 
     const handleLogout = async () => {
@@ -45,6 +48,10 @@ const Navbar = () => {
         } else {
             toast({ title: "Unable to logout", description: "Please check your network", status: "error", duration: 3000, isClosable: true });
         }
+    }
+
+    const handleChangepass = () =>{
+        setPassword(true)
     }
 
     return (
@@ -94,11 +101,10 @@ const Navbar = () => {
 
                     <Menu>
                         <MenuButton as={Button} rounded="full" variant="link" cursor="pointer">
-                            <Avatar size="sm" name="User" />
+                            <Avatar size="md" name={`${user?.first_name || 'U'} ${user?.last_name || ''}`} />
                         </MenuButton>
                         <MenuList>
-                            <MenuItem>Profile</MenuItem>
-                            <MenuItem>Settings</MenuItem>
+                            <MenuItem onClick={handleChangepass}>Change Password</MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </MenuList>
                     </Menu>
@@ -125,7 +131,9 @@ const Navbar = () => {
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>
+            <ChangePassword password={password} setPassword={setPassword}/>
         </Box>
+       
     )
 }
 

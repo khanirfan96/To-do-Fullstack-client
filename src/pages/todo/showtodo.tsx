@@ -83,7 +83,7 @@ const ShowTodo = () => {
                         autoFocus
                     />
                 ) : (
-                    <p className={`bg-white p-2 ${checkedTasks[index] ? "line-through" : ""}`}>
+                    <p className={`p-2 ${checkedTasks[index] ? "line-through" : ""}`}>
                         {todo.task}
                     </p>
                 )}

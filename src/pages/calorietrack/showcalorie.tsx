@@ -24,7 +24,7 @@ const ShowCalorie = () => {
     const { data, fetchData, deleteOneData, deleteData } = useAuthStore();
     const calories = data.calories as Recipe[];
 
-    console.log(calories, 'fhohfhs')
+    console.log(calories, 'caaacaca')
 
     useEffect(() => {
         const loadData = async () => {
@@ -42,7 +42,7 @@ const ShowCalorie = () => {
     
         const allKeys = calories.reduce((keys, obj) => {
             Object.keys(obj).forEach(key => {
-                if (key !== '_id' && typeof obj[key] !== 'number') {
+                if (key !== '_id') {
                     keys.add(key as RecipeHeader);
                 }
             });

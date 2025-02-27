@@ -7,6 +7,7 @@ import Dashboard from "./pages/dashboard/dashboard";
 import TodoIndex from "./pages/todo/todoindex";
 import Login from "./pages/userAuth/login";
 import SignUp from "./pages/userAuth/signup";
+import GymIndex from './pages/gym/gymindex';
 
 const NavigationSetter = () => {
   const setNavigate = useAuthStore(state => state.setNavigate);
@@ -44,6 +45,13 @@ const App = () => {
           element={
             <ProtectedRoute>
               <CalorieIndex />
+            </ProtectedRoute>
+          }
+        />
+         <Route path="/week"
+          element={
+            <ProtectedRoute>
+              <GymIndex />
             </ProtectedRoute>
           }
         />

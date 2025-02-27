@@ -151,7 +151,7 @@ const useAuthStore = create<AuthState>()(
                         }
                     } catch (error: any) {
                         console.error("Login error:", error);
-                        throw new Error(error.response?.data?.message || "Invalid credentials");
+                        throw new Error(error.response?.error || "Invalid credentials");
                     } finally {
                         set({ isLoading: false });
                     }
