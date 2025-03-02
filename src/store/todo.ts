@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import axios from 'axios';
 import { AuthState, DataType, LoginFormData, SignupFormData } from './types';
 import { CALORIE_API_URL, LOGIN_URL, SIGN_UP, TODO_API_URL } from '../utils/api_url';
@@ -7,6 +7,15 @@ import { NavigateFunction } from 'react-router-dom';
 
 // Create axios instance
 const axiosInstance = axios.create();
+
+const cleanupStorage = () => {
+    localStorage.removeItem('auth-storage');
+    
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+};
+cleanupStorage();
 
 const useAuthStore = create<AuthState>()(
     devtools(
@@ -180,6 +189,7 @@ const useAuthStore = create<AuthState>()(
                         refreshToken: null,
                         data: { todos: [], calories: [] }
                     });
+                    cleanupStorage();
                     const { navigate } = get();
                     if (navigate) {
                         navigate('/login');
@@ -188,6 +198,7 @@ const useAuthStore = create<AuthState>()(
             }),
             {
                 name: 'auth-storage',
+                storage: createJSONStorage(() => sessionStorage),
             }
         ),
         {
