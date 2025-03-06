@@ -1,10 +1,6 @@
-import { NavLink } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
-
-interface CustomNavLinkProps {
-    to: string;
-    children: React.ReactNode;
-  }
+import { NavLink } from "react-router-dom";
+import { CustomNavLinkProps } from "./types";
 
 const CustomNavLink: React.FC<CustomNavLinkProps> = ({ to, children }) => {
   return (

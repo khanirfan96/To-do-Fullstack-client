@@ -3,18 +3,14 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/todo";
 import CustomInput from "../../components/ui/input";
-
-interface FormData {
-    email: string;
-    password: string;
-}
+import { LoginData } from "./types";
 
 const Login = () => {
     const navigate = useNavigate();
     const toast = useToast();
     const login = useAuthStore(state => state.login);
     const isLoading = useAuthStore(state => state.isLoading);
-    const [form, setForm] = useState<FormData>({ email: '', password: '' });
+    const [form, setForm] = useState<LoginData>({ email: '', password: '' });
     const [showErrors, setShowErrors] = useState(false); 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

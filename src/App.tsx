@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import useAuthStore from './store/todo';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import ProtectedRoute from "./auth/protectroute";
 import CalorieIndex from "./pages/calorietrack/calorieindex";
 import Dashboard from "./pages/dashboard/dashboard";
+import GymIndex from './pages/gym/gymindex';
 import TodoIndex from "./pages/todo/todoindex";
 import Login from "./pages/userAuth/login";
 import SignUp from "./pages/userAuth/signup";
-import GymIndex from './pages/gym/gymindex';
+import useAuthStore from './store/todo';
 
 const NavigationSetter = () => {
   const setNavigate = useAuthStore(state => state.setNavigate);
@@ -48,7 +48,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-         <Route path="/week"
+        <Route path="/week"
           element={
             <ProtectedRoute>
               <GymIndex />

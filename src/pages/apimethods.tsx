@@ -1,26 +1,6 @@
 import { GYM_API_URL } from "../utils/api_url";
 import axios from 'axios';
-
-interface GetCallParams {
-    url: string;
-}
-
-interface PostData {
-    [key: string]: any;
-}
-
-interface TodoPayload {
-    task: string;
-}
-
-interface CaloriePayload {
-    calories?: number;
-    dish?: string;
-    fat?: number;
-    ingredients: string;
-}
-
-type PayloadType = TodoPayload | CaloriePayload;
+import {GetCallParams} from "./types";
 
 
 export const getCall = async ({ url }: GetCallParams) => {

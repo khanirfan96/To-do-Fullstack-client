@@ -1,23 +1,16 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, FormControl, FormErrorMessage, FormLabel, Grid, Input, Text, useToast } from "@chakra-ui/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Grid, Text, useToast } from "@chakra-ui/react";
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../store/todo";
 import CustomInput from "../../components/ui/input";
-
-interface FormData {
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-    phone: string;
-}
+import useAuthStore from "../../store/todo";
+import { SignupData } from "./types";
 
 const SignUp = () => {
     const navigate = useNavigate();
     const toast = useToast();
     const signup = useAuthStore(state => state.signup);
     const isLoading = useAuthStore(state => state.isLoading);
-    const [form, setForm] = useState<FormData>({
+    const [form, setForm] = useState<SignupData>({
         first_name: '',
         last_name: '',
         email: '',

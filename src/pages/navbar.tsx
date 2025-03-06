@@ -69,7 +69,7 @@ const Navbar = () => {
                 {/* Center: Logo & Links */}
                 <HStack spacing={8} alignItems="center">
                     <Link as={NavLink} to="/dashboard">
-                        <Image src="/images/HC-logo.jpg" alt="Logo" h={14} w={20} />
+                        <Image src="/assets/HC-logo.jpg" alt="Logo" h={14} w={20} />
                     </Link>
                     <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
                         <CustomNavLink to="/todo">Home</CustomNavLink>
