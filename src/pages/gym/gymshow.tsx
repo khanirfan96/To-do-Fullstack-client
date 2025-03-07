@@ -4,6 +4,8 @@ import { daysOrder } from '../../utils/utils';
 import { getCall } from '../apimethods';
 import GymCard from './gymcard';
 import { WorkoutSchedule } from './types';
+import {DndContext} from '@dnd-kit/core';
+// import {SortableContext} from '@dnd-kit/sortable';
 
 const GymShow = () => {
   const [workoutData, setWorkoutData] = useState<WorkoutSchedule>({});
@@ -62,7 +64,11 @@ const GymShow = () => {
         return (
           <div key={day} className='p-2 border-2 border-solid border-neutral-600'>
             <Text className='text-2xl font-bold capitalize'>{day}</Text>
+            <DndContext>
+            {/* <SortableContext dayData={dayData}> */}
             <GymCard dayData={dayData} />
+            {/* </SortableContext> */}
+            </DndContext>
           </div>
         );
       })}

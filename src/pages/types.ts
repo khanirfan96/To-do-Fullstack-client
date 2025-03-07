@@ -16,3 +16,9 @@ export interface CaloriePayload {
     fat?: number;
     ingredients: string;
 }
+
+export interface Changepassword {
+    url:string;
+    id:string;
+    data:any;
+}

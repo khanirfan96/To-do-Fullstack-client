@@ -1,16 +1,17 @@
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import axios from 'axios';
+import axiosInstance from '../utils/axiosinstance';
 import { AuthState, DataType, LoginFormData, SignupFormData } from './types';
 import { CALORIE_API_URL, LOGIN_URL, SIGN_UP, TODO_API_URL } from '../utils/api_url';
 import { NavigateFunction } from 'react-router-dom';
 
 // Create axios instance
-const axiosInstance = axios.create();
+// const axiosInstance = axios.create();
 
 const cleanupStorage = () => {
     localStorage.removeItem('auth-storage');
-    
+
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
@@ -61,12 +62,7 @@ const useAuthStore = create<AuthState>()(
                 },
 
                 updateData: (type: DataType, newData: any[]) => {
-                    set(state => ({
-                        data: {
-                            ...state.data,
-                            [type === 'todo' ? 'todos' : 'calories']: newData
-                        }
-                    }));
+                    set(state => ({ data: { ...state.data, [type === 'todo' ? 'todos' : 'calories']: newData } }));
                 },
 
                 fetchData: async <T,>(type: DataType, url: string): Promise<T> => {
@@ -205,28 +201,11 @@ const useAuthStore = create<AuthState>()(
             name: 'AuthStore',
         }));
 
-// Set up axios interceptors
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = useAuthStore.getState().token;
-        if (token && config.headers) {
-            config.headers['token'] = token;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
+if (typeof window !== 'undefined') {
+    window.addEventListener('auth:unauthorized', () => {
+        useAuthStore.getState().logout();
+    });
+}
 
-axiosInstance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-            useAuthStore.getState().logout();
-        }
-        return Promise.reject(error);
-    }
-);
 
 export default useAuthStore;
