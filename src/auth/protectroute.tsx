@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const isLoading = useAuthStore(state => state.isLoading);
 
     if (isLoading) {
-        return null; // or your loading component
+        return null;
     }
 
     if (!user) {

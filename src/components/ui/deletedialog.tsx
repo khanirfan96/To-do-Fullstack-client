@@ -7,24 +7,24 @@ import {
     AlertDialogOverlay,
     Button,
     useDisclosure
-} from '@chakra-ui/react'
-import { useRef, ReactNode } from 'react'
+} from '@chakra-ui/react';
+import { ReactNode, useRef } from 'react';
 
 interface AlertDialogProps {
     buttonName: ReactNode;
     heading: string;
     body: string;
     finalButton: string;
-    onClick: () => void; 
+    onClick: () => void;
 }
 
-export default function AlertDialogExample(props:AlertDialogProps) {
+export default function AlertDialogExample(props: AlertDialogProps) {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef<HTMLButtonElement>(null)
 
     const handleFinalAction = () => {
-        props.onClick();  
-        onClose();      
+        props.onClick();
+        onClose();
     }
 
     return (
@@ -39,11 +39,7 @@ export default function AlertDialogExample(props:AlertDialogProps) {
                 </div>
             )}
 
-            <AlertDialog
-                isOpen={isOpen}
-                leastDestructiveRef={cancelRef}
-                onClose={onClose}
-            >
+            <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize='lg' fontWeight='bold'>

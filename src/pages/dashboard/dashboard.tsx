@@ -31,72 +31,72 @@ const Dashboard = () => {
         }
     ];
     return (
-        <div className='min-h-screen w-full p-0 m-0'>
+        <div className='min-h-screen w-full bg-white'>
             <Navbar />
-            <Box p={4}>
-                <Grid templateColumns="1.5fr 1.5fr 4fr" gap={4}>
-                    <GridItem>
-                        <Card>
+            <Box p={8} className='bg-gray-100 shadow-sm rounded-lg'>
+                <Grid templateColumns="repeat(3, 1fr)" gap={8} className='p-8'>
+                    <GridItem className='flex flex-col'>
+                        <Card className='h-full bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition-shadow duration-300'>
                             <Box className='flex flex-row justify-between items-center px-2'>
-                                <CardHeader className='text-2xl font-bold'>To-Do List</CardHeader>
+                                <CardHeader className='text-lg font-semibold text-gray-800'>To-Do List</CardHeader>
                                 <Image src="../../../assets/Todo.png" className='w-10 h-10' />
                             </Box>
                             <CardBody>
                                 <Box className='flex flex-row text-center items-center px-2'>
-                                    <Text className='text-xl font-medium'>Total Todo's : </Text>
-                                    <Text className='text-lg px-2'>20</Text>
+                                    <Text className='text-sm font-medium text-gray-700'>Total Todo's : </Text>
+                                    <Text className='text-xs px-2 text-gray-600'>20</Text>
                                 </Box>
                                 <Box className='flex flex-row text-center items-center px-2'>
-                                    <Text className='text-xl font-medium'>Active Todo's: </Text>
-                                    <Text className='text-lg px-2'>20</Text>
+                                    <Text className='text-sm font-medium text-gray-700'>Active Todo's: </Text>
+                                    <Text className='text-xs px-2 text-gray-600'>20</Text>
                                 </Box>
                                 <Box className='flex flex-row text-center items-center px-2'>
-                                    <Text className='text-xl font-medium'>Inactive Todo's: </Text>
-                                    <Text className='text-lg px-2'>20</Text>
+                                    <Text className='text-sm font-medium text-gray-700'>Inactive Todo's: </Text>
+                                    <Text className='text-xs px-2 text-gray-600'>20</Text>
                                 </Box>
                                 <Box className='flex flex-row text-center items-center px-2'>
-                                    <Text className='text-xl font-medium'>Deleted Todo's: </Text>
-                                    <Text className='text-lg px-2'>20</Text>
+                                    <Text className='text-sm font-medium text-gray-700'>Deleted Todo's: </Text>
+                                    <Text className='text-xs px-2 text-gray-600'>20</Text>
                                 </Box>
                             </CardBody>
                         </Card>
                     </GridItem>
 
-                    <GridItem>
-                        <Card>
+                    <GridItem className='flex flex-col'>
+                        <Card className='h-full bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition-shadow duration-300'>
                             <Box className='flex flex-row justify-between items-center px-2'>
-                                <CardHeader className='text-2xl font-bold'>Calorie Tracker</CardHeader>
+                                <CardHeader className='text-lg font-semibold text-gray-800'>Calorie Tracker</CardHeader>
                                 <Image src="../../../assets/Calorie.png" className='w-10 h-15' />
                             </Box>
                             <CardBody>
                                 <Box className='flex flex-row text-center items-center px-2'>
-                                    <Text className='text-xl font-medium'>Total Calories : </Text>
-                                    <Text className='text-lg px-2'>20</Text>
+                                    <Text className='text-sm font-medium text-gray-700'>Total Calories : </Text>
+                                    <Text className='text-xs px-2 text-gray-600'>20</Text>
                                 </Box>
                                 <Box className='flex flex-row text-center items-center px-2'>
-                                    <Text className='text-xl font-medium'>Changed Ingredients: </Text>
-                                    <Text className='text-lg px-2'>20</Text>
+                                    <Text className='text-sm font-medium text-gray-700'>Changed Ingredients: </Text>
+                                    <Text className='text-xs px-2 text-gray-600'>20</Text>
                                 </Box>
                                 <Box className='flex flex-row text-center items-center px-2'>
-                                    <Text className='text-xl font-medium'>Changed Dish: </Text>
-                                    <Text className='text-lg px-2'>20</Text>
+                                    <Text className='text-sm font-medium text-gray-700'>Changed Dish: </Text>
+                                    <Text className='text-xs px-2 text-gray-600'>20</Text>
                                 </Box>
                                 <Box className='flex flex-row text-center items-center px-2'>
-                                    <Text className='text-xl font-medium'>Deleted Dish: </Text>
-                                    <Text className='text-lg px-2'>20</Text>
+                                    <Text className='text-sm font-medium text-gray-700'>Deleted Dish: </Text>
+                                    <Text className='text-xs px-2 text-gray-600'>20</Text>
                                 </Box>
                             </CardBody>
                         </Card>
                     </GridItem>
 
-                    <GridItem>
+                    <GridItem className='flex flex-col'>
                         <Card height="full">
                             <Box className='flex flex-row justify-between items-center px-2'>
-                                <CardHeader className='text-2xl font-bold'>Total Users</CardHeader>
+                                <CardHeader className='text-lg font-semibold text-gray-800'>Total Users</CardHeader>
                                 <Image src="../../../assets/Users.png" className='w-10 h-15' />
                             </Box>
                             <CardBody className='flex flex-row justify-center items-center'>
-                                <PieChart width={330} height={200}>
+                                <PieChart width={400} height={250} className='m-auto'>
                                     <Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#8884d8" label />
                                 </PieChart>
                             </CardBody>
@@ -104,10 +104,10 @@ const Dashboard = () => {
                     </GridItem>
                 </Grid>
                 <Grid templateColumns="3fr 4fr" gap={5} mt={5}>
-                    <GridItem>
+                    <GridItem className='flex flex-col'>
                         <Card height="full">
                             <Box className='flex flex-row justify-between items-center px-2'>
-                                <CardHeader className='text-2xl font-bold'>Health Cart</CardHeader>
+                                <CardHeader className='text-lg font-semibold text-gray-800'>Health Cart</CardHeader>
                                 <Image src="../../../assets/Cart.png" className='w-10 h-15' />
                             </Box>
                             <CardBody>
@@ -115,10 +115,10 @@ const Dashboard = () => {
                             </CardBody>
                         </Card>
                     </GridItem>
-                    <GridItem>
+                    <GridItem className='flex flex-col'>
                         <Card height="full">
                             <Box className='flex flex-row justify-between items-center px-2'>
-                                <CardHeader className='text-2xl font-bold'>Gym Week</CardHeader>
+                                <CardHeader className='text-lg font-semibold text-gray-800'>Gym Week</CardHeader>
                                 <Image src="../../../assets/Gym.png" className='w-10 h-15' />
                             </Box>
                             <CardBody>

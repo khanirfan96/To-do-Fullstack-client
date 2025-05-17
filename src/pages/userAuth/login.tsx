@@ -1,8 +1,8 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, FormControl, FormErrorMessage, FormLabel, Grid, Input, Text, useToast } from "@chakra-ui/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Grid, Text, useToast } from "@chakra-ui/react";
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../store/todo";
 import CustomInput from "../../components/ui/input";
+import useAuthStore from "../../store/todo";
 import { LoginData } from "./types";
 
 const Login = () => {
@@ -11,7 +11,7 @@ const Login = () => {
     const login = useAuthStore(state => state.login);
     const isLoading = useAuthStore(state => state.isLoading);
     const [form, setForm] = useState<LoginData>({ email: '', password: '' });
-    const [showErrors, setShowErrors] = useState(false); 
+    const [showErrors, setShowErrors] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -27,8 +27,9 @@ const Login = () => {
             return;
         }
 
-        if(form){
+        if (form) {
             await login(form);
+            toast({ title: "Login Succesfull", description: "Login Succesfull", status: "success", duration: 3000, isClosable: true });
         } else {
             toast({ title: "Login Failed", description: "Please Try Again!!", status: "error", duration: 3000, isClosable: true });
         }
@@ -40,7 +41,7 @@ const Login = () => {
 
     const handleCancel = () => {
         setForm({ email: '', password: '' });
-        setShowErrors(false); 
+        setShowErrors(false);
     }
 
     const errors = {

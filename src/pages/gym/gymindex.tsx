@@ -3,7 +3,7 @@ import GymShow from './gymshow'
 
 const GymIndex = () => {
   return (
-    <div>
+    <div className='min-h-screen bg-gray-50'>
         <Navbar />
         <GymShow />
     </div>
